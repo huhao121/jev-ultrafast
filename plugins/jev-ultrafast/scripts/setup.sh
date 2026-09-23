@@ -20,6 +20,20 @@ if [ ! -d "$PROJECT/.git" ]; then
 fi
 
 cd "$PROJECT"
+
+# The skill and the /jev command both run ./scripts/start-automation-chrome.sh from
+# the project root, so place this plugin's launcher there. It is a plugin artifact,
+# not user config: refreshed on every run so it stays in step with the plugin, and
+# left untracked in the checkout.
+SCRIPT_DIR=$(unset CDPATH; cd -- "$(dirname -- "$0")" && pwd)
+mkdir -p scripts
+for launcher in start-automation-chrome.sh start-automation-chrome.cmd; do
+  if [ -f "$SCRIPT_DIR/$launcher" ]; then
+    cp "$SCRIPT_DIR/$launcher" "scripts/$launcher"
+    chmod +x "scripts/$launcher" 2>/dev/null || true
+  fi
+done
+
 echo "Installing Jev dependencies..."
 uv sync
 [ -e .env ] || cp .env.example .env

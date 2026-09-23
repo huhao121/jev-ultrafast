@@ -68,7 +68,8 @@ from `https://console.typesafe.ai/settings/keys`.
 ```bash
 cd "$JEV_ULTRAFAST_HOME"
 
-# browser: start (or reuse) the dedicated automation Chrome — idempotent
+# browser: start (or reuse) the dedicated automation Chrome — installed by setup.sh, idempotent
+# (it exits without starting anything when a browser already listens on the port)
 ./scripts/start-automation-chrome.sh        # Windows: scripts\start-automation-chrome.cmd
 
 # one-shot CLI task (repeat --goal for an ordered list)
