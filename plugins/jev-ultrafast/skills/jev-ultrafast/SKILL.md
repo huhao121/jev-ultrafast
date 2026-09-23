@@ -11,10 +11,34 @@ writes text only when the operation is `TYPE_TEXT`. No screenshots are consumed 
 
 Operations: `CLICK`, `TYPE_TEXT`, `SELECT`, `SCROLL_UP`, `SCROLL_DOWN`, `WAIT`, `DONE`, `BLOCKED`.
 
+## First use: automatic setup
+
+Do not stop because the checkout or virtual environment is missing. Run the bundled setup script;
+it clones this fork into `$JEV_ULTRAFAST_HOME` (default `~/jev-ultrafast`), runs `uv sync`, creates
+`.env` from `.env.example`, and reuses `OPENROUTER_API_KEY` from the current environment when it
+is available:
+
+The Codex GitHub skill installer copies only the skill directory, so clone this fork on first use
+and invoke the setup helper from the checkout:
+
+```bash
+SETUP_DIR="${TMPDIR:-/tmp}/jev-ultrafast-bootstrap"
+if [ ! -x "$SETUP_DIR/plugins/jev-ultrafast/scripts/setup.sh" ]; then
+  rm -rf "$SETUP_DIR"
+  git clone --depth 1 https://github.com/huhao121/jev-ultrafast.git "$SETUP_DIR"
+fi
+"$SETUP_DIR/plugins/jev-ultrafast/scripts/setup.sh"
+```
+
+The script is idempotent and never overwrites an existing `.env`.
+
+Credentials are the only setup input it cannot invent. If they are missing, report the exact local
+`.env` path and the missing variable names; never ask the user to paste secrets into chat.
+
 ## Prerequisites
 
-1. A checkout of the project (`$JEV_ULTRAFAST_HOME`, commonly `~/jev-ultrafast`), with `uv sync` run
-   once. Python >= 3.12 and [uv](https://docs.astral.sh/uv/) must be on PATH.
+1. Python >= 3.12 and [uv](https://docs.astral.sh/uv/) must be on PATH. The setup script installs
+   the project dependencies automatically.
 2. Credentials in the project's `.env` (upstream `.gitignore` covers it):
    - `TYPESAFE_API_KEY` — the Jev decision model.
    - `TEXT_MODEL_API_KEY` — an OpenAI-compatible text model, used only by `TYPE_TEXT`.
@@ -59,6 +83,9 @@ uv run jev
 uv run pytest -q
 uv run browser-harness --doctor
 ```
+
+If the user asks about flights without giving a URL, use
+`https://www.google.com/travel/flights?hl=en`.
 
 Library use:
 
