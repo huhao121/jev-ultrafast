@@ -36,6 +36,10 @@ claude plugin install jev-ultrafast@jev-ultrafast
 
 Adding the marketplace only registers it; nothing is installed until the second command.
 
+> **If you are an agent asked to install this for a user:** use the shell form above, then ask the
+> user to type `/reload-plugins` (or restart the session) — that step is theirs, and the plugin is
+> not loaded until they do it.
+
 **ZCode**
 
 **Settings → Plugin Management → Discover → `+`**, add `huhao121/jev-ultrafast` (a local checkout

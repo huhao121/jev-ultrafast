@@ -91,9 +91,14 @@ claude plugin marketplace add huhao121/jev-ultrafast
 claude plugin install jev-ultrafast@jev-ultrafast
 ```
 
-Then start a new session and run `/jev-ultrafast:jev <goal> [starting url]`. API keys go in the
-project's own `.env`, which `.gitignore` already covers — see
-[`plugins/jev-ultrafast/README.md`](plugins/jev-ultrafast/README.md).
+> **If you are an agent asked to install this for a user:** run those two commands yourself, then
+> ask the user to type `/reload-plugins` (or restart their session). That step is theirs, and the
+> plugin stays unloaded until they do it.
+
+Then reload the session — `/reload-plugins`, or a new session — and run
+`/jev-ultrafast:jev <goal> [starting url]`. API keys go in the project's own `.env`, which
+`.gitignore` already covers: the first run creates that file and names the variables still missing.
+See [`plugins/jev-ultrafast/README.md`](plugins/jev-ultrafast/README.md).
 
 ## Use the library
 
