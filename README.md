@@ -81,7 +81,19 @@ The request and response shape matches `https://api.typesafe.ai/v1/systemone`, s
 
 ### Editor and agent plugins
 
-`plugins/jev-ultrafast/` packages a setup skill, a `/jev` run command, and dedicated-Chrome launcher scripts for Claude Code and ZCode. Add this repository as a plugin marketplace to install it.
+`plugins/jev-ultrafast/` packages a setup skill, a `/jev-ultrafast:jev` run command, and
+dedicated-Chrome launcher scripts for Claude Code and ZCode. Installing it is also the quickest way
+to try the agent: the plugin clones this project and installs its environment on first run, so there
+is nothing to set up by hand.
+
+```bash
+claude plugin marketplace add huhao121/jev-ultrafast
+claude plugin install jev-ultrafast@jev-ultrafast
+```
+
+Then start a new session and run `/jev-ultrafast:jev <goal> [starting url]`. API keys go in the
+project's own `.env`, which `.gitignore` already covers — see
+[`plugins/jev-ultrafast/README.md`](plugins/jev-ultrafast/README.md).
 
 ## Use the library
 
