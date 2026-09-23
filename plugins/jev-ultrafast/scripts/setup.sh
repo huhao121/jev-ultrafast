@@ -36,7 +36,16 @@ done
 
 echo "Installing Jev dependencies..."
 uv sync
-[ -e .env ] || cp .env.example .env
+if [ ! -e .env ]; then
+  cp .env.example .env
+  # Point the project at the dedicated automation Chrome this plugin installs and the
+  # /jev-ultrafast:jev command starts. With BU_CDP_URL unset, Browser Harness auto-discovers a
+  # browser instead — but it only counts the standard Chrome profile directories as "a browser is
+  # running", so a user whose only Chrome is the automation one gets "chrome-not-running" before
+  # the port probe ever runs. An existing .env is never touched: delete this line to drive your own
+  # Chrome profile instead, and set JEV_CHROME_PORT before the first run to change the port.
+  printf 'BU_CDP_URL=http://127.0.0.1:%s\n' "${JEV_CHROME_PORT:-9222}" >> .env
+fi
 
 # If the caller already exported one OpenRouter key, use it for both providers.
 if [ -n "${OPENROUTER_API_KEY:-}" ]; then
