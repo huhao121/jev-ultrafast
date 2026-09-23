@@ -2,6 +2,8 @@
 
 import hashlib
 import json
+import os
+import subprocess
 import sys
 import time
 from pathlib import Path
@@ -13,6 +15,12 @@ from browser_harness.helpers import cdp
 READ_STATE = Path(__file__).with_name("snapshot.js").read_text()
 MARKER = f"(() => {{ const state={READ_STATE}; return state?.marker ?? null; }})()"
 
+# JEV_TAB=foreground opens the owned tab as Chrome's active tab and raises Chrome, so a
+# screen recording can see the run; the default keeps it hidden. JEV_KEEP_TAB leaves the
+# tab open after close() instead of destroying the page the run just produced.
+BACKGROUND = os.environ.get("JEV_TAB", "background").strip().lower() != "foreground"
+KEEP_TAB = os.environ.get("JEV_KEEP_TAB", "").strip().lower() in {"1", "true", "yes"}
+
 class StalePage(ValueError):
     """A decision no longer refers to the observed page."""
 
@@ -20,11 +28,14 @@ class StalePage(ValueError):
 class Browser:
     def __init__(self, url):
         ensure_daemon()
-        self.target = cdp("Target.createTarget", url="about:blank", background=True)["targetId"]
+        self.target = cdp("Target.createTarget", url="about:blank", background=BACKGROUND)["targetId"]
         self.session = cdp("Target.attachToTarget", targetId=self.target, flatten=True)["sessionId"]
         self.call("Emulation.setDeviceMetricsOverride", width=1120, height=780, deviceScaleFactor=1, mobile=False)
-        # Keep rAF/menus rendering in an owned background tab, without activating the user's Chrome tab.
+        # Keep rAF/menus rendering in an owned tab, without activating the user's Chrome tab.
         self.call("Emulation.setFocusEmulationEnabled", enabled=True)
+        if not BACKGROUND:
+            self.call("Page.bringToFront")
+            _raise_chrome()
         self.call("Page.navigate", url=url)
         deadline = time.monotonic() + 15
         while time.monotonic() < deadline:
@@ -108,8 +119,24 @@ class Browser:
 
     def close(self):
         if self.target:
-            cdp("Target.closeTarget", targetId=self.target)
+            if not KEEP_TAB:
+                cdp("Target.closeTarget", targetId=self.target)
             self.target = None
+
+
+def _raise_chrome():
+    """Bring Chrome's window forward so a foreground run is actually visible on screen."""
+    if sys.platform != "darwin":
+        return
+    try:
+        subprocess.run(
+            ["osascript", "-e", 'tell application "Google Chrome" to activate'],
+            timeout=5,
+            check=False,
+            capture_output=True,
+        )
+    except (OSError, subprocess.SubprocessError):
+        pass
 
 
 def fingerprint(state):
