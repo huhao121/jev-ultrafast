@@ -17,10 +17,10 @@ Steps:
    installs the launcher below into the project. Do not stop merely because the project is absent.
    Report only whether credentials are set, never their contents.
 2. Start the browser (idempotent): `./scripts/start-automation-chrome.sh` (or `.cmd` on Windows)
-   from the project directory — step 1 puts it there. It exits without starting anything when a
-   browser already listens on the port, so it is safe when the user's own Chrome has remote
-   debugging on. Skip it entirely if the project `.env` sets `BU_CDP_URL` to a browser the user
-   already runs.
+   from the project directory — step 1 puts it there. Always run it: it exits without starting
+   anything when a browser already listens on the port, so it is safe when the user's own Chrome
+   has remote debugging on. Do not skip it because the project `.env` sets `BU_CDP_URL` — a fresh
+   `.env` points at this port on purpose, and nothing listens there until this script has run once.
 3. Run the task from the project directory:
 
    ```bash

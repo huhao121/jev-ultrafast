@@ -49,7 +49,9 @@ and run the command, giving it a goal and optionally a starting URL:
 ```
 
 The first run clones the project into `~/jev-ultrafast` (override with `JEV_ULTRAFAST_HOME`), runs
-`uv sync`, and creates `.env` from `.env.example`. If `OPENROUTER_API_KEY` is already exported it
+`uv sync`, and creates `.env` from `.env.example`. It also points that `.env` at the dedicated
+automation Chrome the command starts for you (`BU_CDP_URL=http://127.0.0.1:9222`), so you never have
+to enable remote debugging on your own browser. If `OPENROUTER_API_KEY` is already exported it
 reuses that key for both providers; otherwise it stops and names the variables still missing, which
 you then add to the project's `.env` (see **Keys are never stored here** below).
 

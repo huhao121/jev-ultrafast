@@ -8,7 +8,7 @@
   "plugins": [
     {
       "name": "jev-ultrafast",
-      "description": "Drive Chrome from one natural-language goal via Jev's operation+target decisions: setup skill, a /jev command, and a dedicated-Chrome launcher. Keys stay in the project's gitignored .env.",
+      "description": "Drive Chrome from one natural-language goal via Jev's operation+target decisions: setup skill, a /jev-ultrafast:jev command, and a dedicated-Chrome launcher. Keys stay in the project's gitignored .env.",
       "author": {
         "name": "white-drizzle",
         "url": "https://github.com/white-drizzle"

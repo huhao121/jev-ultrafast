@@ -102,12 +102,16 @@ with Agent("https://www.google.com/travel/flights?hl=en",
 
 ## Browser options
 
-- **Dedicated automation Chrome (recommended).** `scripts/start-automation-chrome.*` launches Chrome
+- **Dedicated automation Chrome (default).** `scripts/start-automation-chrome.*` launches Chrome
   with `--remote-debugging-port` and its own `--user-data-dir`, so nothing is enabled on the user's
-  daily profile. Point the project at it with `BU_CDP_URL=http://127.0.0.1:9222` in `.env`.
-- **Your own Chrome profile.** Leave `BU_CDP_URL` unset and enable
+  daily profile. `setup.sh` writes `BU_CDP_URL=http://127.0.0.1:9222` into a new `.env` to point the
+  project at it, honouring `JEV_CHROME_PORT` if that was set when the `.env` was created.
+- **Your own Chrome profile.** Delete the `BU_CDP_URL` line and enable
   `chrome://inspect/#remote-debugging` in Chrome. Only a human can tick that box, and Chrome shows a
-  per-connection "Allow remote debugging?" prompt afterwards.
+  per-connection "Allow remote debugging?" prompt afterwards. With `BU_CDP_URL` unset, Browser
+  Harness auto-discovers a browser, but it only treats the standard Chrome profile directories as "a
+  browser is running" — a user with no ordinary Chrome open gets `chrome-not-running` even while the
+  automation Chrome is up, which is why the dedicated Chrome is the default.
 
 ## Caveats
 
