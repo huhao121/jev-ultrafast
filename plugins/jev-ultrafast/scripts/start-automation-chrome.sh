@@ -8,8 +8,24 @@ set -eu
 PORT="${JEV_CHROME_PORT:-9222}"
 PROFILE="${JEV_CHROME_PROFILE:-$HOME/.config/browser-harness/chrome-automation}"
 
-if command -v curl >/dev/null 2>&1 && curl -fsS "http://127.0.0.1:$PORT/json/version" >/dev/null 2>&1; then
-  echo "Automation Chrome is already listening on port $PORT."
+# Reuse whatever already listens on PORT. Probe the socket, not /json/version: a
+# Chrome started from chrome://inspect's remote-debugging toggle answers 404 on
+# every /json/* endpoint, so a curl-only probe reads that as "nothing is
+# listening" and this script then launches a second Chrome against an occupied
+# port — which is exactly the setup the "reuse" branch exists to avoid.
+port_in_use() {
+  if command -v lsof >/dev/null 2>&1 && lsof -nP -iTCP:"$PORT" -sTCP:LISTEN >/dev/null 2>&1; then
+    return 0
+  fi
+  # -sS without -f: any HTTP answer, a 404 included, proves something is there.
+  if command -v curl >/dev/null 2>&1 && curl -sS -o /dev/null --max-time 3 "http://127.0.0.1:$PORT/json/version" >/dev/null 2>&1; then
+    return 0
+  fi
+  return 1
+}
+
+if port_in_use; then
+  echo "Port $PORT is already in use — reusing that browser instead of starting another."
   exit 0
 fi
 

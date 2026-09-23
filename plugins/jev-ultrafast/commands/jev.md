@@ -9,12 +9,18 @@ Run the [jev-ultrafast](https://github.com/huhao121/jev-ultrafast) browser agent
 
 Steps:
 
-1. Prepare the project automatically. If `$JEV_ULTRAFAST_HOME/plugins/jev-ultrafast/scripts/setup.sh`
-   exists, run it. Otherwise clone `https://github.com/huhao121/jev-ultrafast.git` to
-   `${JEV_ULTRAFAST_HOME:-$HOME/jev-ultrafast}` and run its setup script. Do not stop merely because
-   the project is absent. Report only whether credentials are set, never their contents.
-2. Start the browser (idempotent): `./scripts/start-automation-chrome.sh` (or `.cmd` on Windows).
-   Skip this if the project `.env` sets `BU_CDP_URL` to a browser the user already runs.
+1. Prepare the project automatically. Run `${CLAUDE_PLUGIN_ROOT}/scripts/setup.sh` — the plugin's
+   own copy of the setup script (in a harness that leaves that placeholder unsubstituted, find the
+   installed `jev-ultrafast` plugin folder instead). If it is not there, clone
+   `https://github.com/huhao121/jev-ultrafast.git` to `${JEV_ULTRAFAST_HOME:-$HOME/jev-ultrafast}`
+   and run `plugins/jev-ultrafast/scripts/setup.sh` from that clone. The script is idempotent and
+   installs the launcher below into the project. Do not stop merely because the project is absent.
+   Report only whether credentials are set, never their contents.
+2. Start the browser (idempotent): `./scripts/start-automation-chrome.sh` (or `.cmd` on Windows)
+   from the project directory — step 1 puts it there. It exits without starting anything when a
+   browser already listens on the port, so it is safe when the user's own Chrome has remote
+   debugging on. Skip it entirely if the project `.env` sets `BU_CDP_URL` to a browser the user
+   already runs.
 3. Run the task from the project directory:
 
    ```bash
