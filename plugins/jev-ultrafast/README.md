@@ -17,11 +17,45 @@ when the operation is `TYPE_TEXT`.
 
 ## Install
 
-Add this repository as a marketplace, then install the plugin:
+Nothing to clone by hand. Add this repository as a marketplace, install the plugin, and the first
+run sets the project up for you.
 
-- ZCode / Claude Code: **Settings → Plugin Management → Discover → `+`** and point it at the local
-  checkout (a directory is accepted), then install **jev-ultrafast**; or add
-  `https://github.com/browser-use/jev-ultrafast` once this lands upstream.
+**Claude Code** — inside a session:
+
+```text
+/plugin marketplace add huhao121/jev-ultrafast
+/plugin install jev-ultrafast@jev-ultrafast
+```
+
+The same two steps from your shell:
+
+```bash
+claude plugin marketplace add huhao121/jev-ultrafast
+claude plugin install jev-ultrafast@jev-ultrafast
+```
+
+Adding the marketplace only registers it; nothing is installed until the second command.
+
+**ZCode**
+
+**Settings → Plugin Management → Discover → `+`**, add `huhao121/jev-ultrafast` (a local checkout
+path works too), then install **jev-ultrafast**.
+
+Then restart the session — in Claude Code, `/reload-plugins` applies the change without a restart —
+and run the command, giving it a goal and optionally a starting URL:
+
+```text
+/jev-ultrafast:jev Find one-way flights from Zurich to London on September 20, 2026
+```
+
+The first run clones the project into `~/jev-ultrafast` (override with `JEV_ULTRAFAST_HOME`), runs
+`uv sync`, and creates `.env` from `.env.example`. If `OPENROUTER_API_KEY` is already exported it
+reuses that key for both providers; otherwise it stops and names the variables still missing, which
+you then add to the project's `.env` (see **Keys are never stored here** below).
+
+Working on the plugin itself? `claude plugin marketplace add ./path/to/your/checkout` installs from a
+local directory instead. Remove the GitHub marketplace first if you already added it — both
+register under the same name, and Claude Code refuses a second source for a name it knows.
 
 ## Keys are never stored here
 
@@ -31,8 +65,9 @@ plugin directory, to `plugin.json`, or to any file that is committed.
 
 ## Requirements
 
-- Python ≥ 3.12 and [uv](https://docs.astral.sh/uv/)
-- Google Chrome (or Chromium) and a local checkout of the `jev-ultrafast` project
+- Python ≥ 3.12 and [uv](https://docs.astral.sh/uv/) — the first run installs the project
+  dependencies with `uv sync`
+- Google Chrome (or Chromium); the project checkout itself is created on the first run
 - API credentials: TypeSafe Jev (`https://docs.typesafe.ai`), or an OpenRouter key for both the
   decisions model (`~typesafe/jev-latest` via `/api/alpha/decisions`) and the text model
 

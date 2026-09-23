@@ -21,7 +21,7 @@ fi
 
 cd "$PROJECT"
 
-# The skill and the /jev command both run ./scripts/start-automation-chrome.sh from
+# The skill and the /jev-ultrafast:jev command both run ./scripts/start-automation-chrome.sh from
 # the project root, so place this plugin's launcher there. It is a plugin artifact,
 # not user config: refreshed on every run so it stays in step with the plugin, and
 # left untracked in the checkout.
